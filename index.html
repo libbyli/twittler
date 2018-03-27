@@ -3,25 +3,89 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
+   <center><div class="header">
+    <img src="http://icons.iconarchive.com/icons/uiconstock/socialmedia/32/Twitter-icon.png">
+    </div>
+    <div>
+      <button>Show new tweets</button>
+    </div>
+    <div class="container">
+      tweets will be appended or prepended here
+    </div>
     <script>
 
       $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
-
+        var $container = $('.container');
+        var incoming = streams.home.length - 1;
+        $container.html('');
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
+          var $tweet = $('<div class="tweet"></div>');
+          var currentDate = new Date();
+          var currentHour = currentDate.getHours();
+          var currentMinutes = currentDate.getMinutes();
+          var hour = currentHour;
+          var ampm = "AM";
+          if (currentHour >= 12) {
+            hour = currentHour - 12;
+            ampm = "PM";
+          }
+          if (hour === 0) {
+          hour = 12;
+          }
+
+          if (currentMinutes < 10) {
+            currentMinutes = "0" + currentMinutes;
+          }
+
+          $tweet.html('<p><span class = "username" data-username ="' + tweet.user + '"><strong>@' + tweet.user + '</strong></span>' + ' · ' 
+            + hour + ':' + currentMinutes + ' ' + ampm + ' ' +  currentDate.getDate() + '-' + (currentDate.getMonth()+1) + '-' + currentDate.getFullYear() 
+            + '<br />' + tweet.message + '</p>');
+          $tweet.appendTo($container);
+          $tweet.find('.username').on('click', showUserTweets);
           index -= 1;
         }
 
+        $('button').click(function() {
+        var index = streams.home.length - 1;
+        var index2 = streams.home.length - 1;
+        while(index >= incoming + 1) {
+          var tweet = streams.home[index];
+          var $tweet = $('<div class="tweet"></div');
+          var currentDate = new Date();
+          $tweet.html('<p><span class = "username" data-username ="' + tweet.user + '"><strong>@' + tweet.user + '</strong></span>' + ' · ' 
+            + hour + ':' + currentMinutes + ' ' + ampm + ' ' +  currentDate.getDate() + '-' + (currentDate.getMonth()+1) + '-' + currentDate.getFullYear() 
+            + '<br />' + tweet.message + '</p>');
+          $tweet.prependTo($container);
+          $tweet.find('.username').on('click', showUserTweets);
+          index -= 1;
+          }
+          incoming = index2;
+        });
+
+        function showUserTweets() {
+          var username = $(this).data('username');
+          var tweets = streams.users[username];
+          var $modal = $('<div class="modal"><span class = "close">x close</span></div>');
+          tweets.forEach(function(tweet) {
+            var $tweet = $('<div></div>');
+            $tweet.html('<p><span class = "username" data-username ="' + tweet.user + '"><strong>@' + tweet.user + '</strong></span>' + ' · ' 
+            + hour + ':' + currentMinutes + ' ' + ampm + ' ' +  currentDate.getDate() + '-' + (currentDate.getMonth()+1) + '-' + currentDate.getFullYear() 
+            + '<br />' + tweet.message + '</p>');
+            $tweet.prependTo($modal);
+          });
+          $modal.hide().prependTo($container).slideDown();
+          $modal.find('.close').on('click', function() {
+            $modal.slideUp();
+          })
+        }
       });
 
     </script>
+    </center>
   </body>
 </html>

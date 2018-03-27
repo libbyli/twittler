@@ -1,0 +1,18 @@
+body {
+    background-color: #e6ecf0;
+    font-family: Helvetica;
+}
+
+.tweet, .modal {
+    background-color: #FFFFFF;
+    border: 1px solid #e6ecf0;
+    width: 650px;
+}
+
+button {
+    font-family: Helvetica;
+    font-size: 14px;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #e6ecf0;
+}
